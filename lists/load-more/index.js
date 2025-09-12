@@ -37,6 +37,9 @@ window.onload = () => {
     rowsCount = Math.ceil(list.parentElement.offsetHeight / rowHeight) - 1
     initHeight = (rowHeight + (overlay ? rowHeight * 0.75 : 0))
     list.parentElement.style.height = setContainerHeight()
+    console.log("Row Height: ", rowHeight)
+    console.log("Row Count: ", rowsCount)
+    console.log("Init Height: ", initHeight)
   }
   // Click animation
   moreButton.onclick = (event) => {
