@@ -17,16 +17,12 @@ window.onload = () => {
     const moreButton = document.querySelector('[mm-list-element="more-button"]')
     const overlay = document.querySelector('[mm-list-element="overlay"]') || null
     // Variables
-    let rowHeight = 0
-    let rowsCount = 0
-    let initHeight = 0
+    let rowHeight = list.children[0].offsetHeight + 32
+    let rowsCount = Math.ceil( list.parentElement.offsetHeight / rowHeight) - 1
+    let initHeight = rowHeight + (overlay ? rowHeight * 0.75 : 0)
     let clicksCount = 0
     // Functions
     const setContainerHeight = () => {
-        list.parentElement.removeAttribute('style')
-        rowHeight = list.children[0].offsetHeight + 32
-        rowsCount = Math.ceil( list.parentElement.offsetHeight / rowHeight) - 1
-        initHeight = (rowHeight + (overlay ? rowHeight * 0.75 : 0))
         list.parentElement.style.height = initHeight + (rowsCount * clicksCount) + 'px'
     }
     const setFinalState = () => {
@@ -39,6 +35,10 @@ window.onload = () => {
     console.log("Initial Row Count: ", rowsCount)
     // Responsiveness
     window.onresize = () => {
+        list.parentElement.removeAttribute('style')
+        rowHeight = list.children[0].offsetHeight + 32
+        rowsCount = Math.ceil( list.parentElement.offsetHeight / rowHeight) - 1
+        initHeight = rowHeight + (overlay ? rowHeight * 0.75 : 0)
         setContainerHeight()
         console.log("Row Count: ", rowsCount)
     }
@@ -46,7 +46,6 @@ window.onload = () => {
     moreButton.onclick = (event) => {
         event.preventDefault()
         clicksCount++
-        if(clicksCount === rowsCount)  setFinalState()
-        else setContainerHeight()
+        clicksCount === rowsCount ? setFinalState() : setContainerHeight()
     }
 }
