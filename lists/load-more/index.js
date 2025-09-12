@@ -23,7 +23,7 @@ window.onload = () => {
     let clicksCount = 0
     // Functions
     const setContainerHeight = () => {
-        list.parentElement.style.height = initHeight + (rowsCount * clicksCount) + 'px'
+        list.parentElement.style.height = initHeight + (rowHeight * clicksCount) + 'px'
     }
     const setFinalState = () => {
         overlay && removeElement(overlay)
