@@ -22,7 +22,5 @@ window.onload = () => {
     clicksCount++
     if(clicksCount === rowsCount) newsList.parentElement.style.height = setFinalState()
     else newsList.parentElement.style.height = setContainerHeight()
-    console.log("Clicks = ", clicksCount)
-    console.log("Rows = ", rowsCount)
   }
 }
