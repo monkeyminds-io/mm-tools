@@ -17,34 +17,36 @@ window.onload = () => {
     const moreButton = document.querySelector('[mm-list-element="more-button"]')
     const overlay = document.querySelector('[mm-list-element="overlay"]') || null
     // Variables
+    let rowHeight = 0
     let rowsCount = 0
+    let initHeight = 0
     let clicksCount = 0
     // Functions
     const setContainerHeight = () => {
-        let rowHeight = list.children[0].offsetHeight + 32
-        let initHeight = rowHeight + (overlay ? rowHeight * 0.75 : 0)
-        rowsCount = Math.ceil(list.parentElement.offsetHeight / rowHeight) - 1
-        return initHeight + (rowHeight * clicksCount) + 'px'
+        list.parentElement.removeAttribute('style')
+        rowHeight = list.children[0].offsetHeight + 32
+        rowsCount = Math.ceil( list.parentElement.offsetHeight / rowHeight) - 1
+        initHeight = (rowHeight + (overlay ? rowHeight * 0.75 : 0))
+        list.parentElement.style.height = initHeight + (rowsCount * clicksCount) + 'px'
     }
     const setFinalState = () => {
         overlay && removeElement(overlay)
         moreButton && removeElement(moreButton)
-        return 'auto'
+        list.parentElement.style.height = 'auto'
     }
     // Initial setup
-    const init = () => list.parentElement.style.height = setContainerHeight()
-    init()
+    setContainerHeight()
     console.log("Initial Row Count: ", rowsCount)
     // Responsiveness
     window.onresize = () => {
-        init()
+        setContainerHeight()
         console.log("Row Count: ", rowsCount)
     }
     // Click animation
     moreButton.onclick = (event) => {
         event.preventDefault()
         clicksCount++
-        if(clicksCount === rowsCount) list.parentElement.style.height = setFinalState()
-        else list.parentElement.style.height = setContainerHeight()
+        if(clicksCount === rowsCount)  setFinalState()
+        else setContainerHeight()
     }
 }
