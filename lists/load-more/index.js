@@ -19,7 +19,7 @@ window.onload = () => {
     // Variables
     let rowHeight = list.children[0].offsetHeight + 32
     let rowsCount = Math.ceil( list.parentElement.offsetHeight / rowHeight) - 1
-    let initHeight = rowHeight + (overlay ? rowHeight * 0.75 : 0)
+    let initHeight = rowHeight + (overlay !== null ? rowHeight * 0.75 : 0)
     let clicksCount = 0
     // Functions
     const setContainerHeight = () => {
@@ -32,7 +32,7 @@ window.onload = () => {
     }
     // Initial setup
     setContainerHeight()
-    console.log("Initial Row Count: ", rowsCount)
+    console.log("Initial Row Height: ", rowHeight)
     // Responsiveness
     window.onresize = () => {
         list.parentElement.removeAttribute('style')
@@ -40,7 +40,7 @@ window.onload = () => {
         rowsCount = Math.ceil( list.parentElement.offsetHeight / rowHeight) - 1
         initHeight = rowHeight + (overlay ? rowHeight * 0.75 : 0)
         setContainerHeight()
-        console.log("Row Count: ", rowsCount)
+        console.log("Row Height: ", rowHeight)
     }
     // Click animation
     moreButton.onclick = (event) => {
