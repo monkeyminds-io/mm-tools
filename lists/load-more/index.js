@@ -37,7 +37,7 @@ window.onload = () => {
     // Responsiveness
     window.onresize = () => {
         rowHeight = list.children[0].offsetHeight + 32
-        rowsCount = Math.ceil(list.parentElement.offsetHeight / rowHeight) - 1
+        rowsCount = Math.ceil(list.parentElement.offsetHeight / rowHeight)
         initHeight = (rowHeight + (overlay ? rowHeight * 0.75 : 0))
         list.parentElement.style.height = setContainerHeight()
         console.log("Row Height: ", rowHeight)
