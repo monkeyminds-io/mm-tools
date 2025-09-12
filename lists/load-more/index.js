@@ -32,7 +32,6 @@ window.onload = () => {
     }
     // Initial setup
     setContainerHeight()
-    console.log("Initial Row Height: ", rowHeight)
     // Responsiveness
     window.onresize = () => {
         list.parentElement.removeAttribute('style')
@@ -40,7 +39,6 @@ window.onload = () => {
         rowsCount = Math.ceil( list.parentElement.offsetHeight / rowHeight) - 1
         initHeight = rowHeight + (overlay ? rowHeight * 0.75 : 0)
         setContainerHeight()
-        console.log("Row Height: ", rowHeight)
     }
     // Click animation
     moreButton.onclick = (event) => {
