@@ -12,38 +12,41 @@ import { removeElement } from '../../libs/utiles.js'
 // Load More Button Logic
 // =============================================================================
 window.onload = () => {
-    // DOM Elements
-    const list = document.querySelector('[mm-list-element="list"]')
-    const moreButton = document.querySelector('[mm-list-element="more-button"]')
-    const overlay = document.querySelector('[mm-list-element="overlay"]') || null
-    // Variables
-    let rowHeight = list.children[0].offsetHeight + 32
-    let rowsCount = Math.ceil( list.parentElement.offsetHeight / rowHeight) - 1
-    let initHeight = rowHeight + (overlay !== null ? rowHeight * 0.75 : 0)
-    let clicksCount = 0
-    // Functions
-    const setContainerHeight = () => {
-        list.parentElement.style.height = initHeight + (rowHeight * clicksCount) + 'px'
-    }
-    const setFinalState = () => {
-        overlay && removeElement(overlay)
-        moreButton && removeElement(moreButton)
-        list.parentElement.style.height = 'auto'
-    }
-    // Initial setup
-    setContainerHeight()
-    // Responsiveness
-    window.onresize = () => {
-        list.parentElement.removeAttribute('style')
-        rowHeight = list.children[0].offsetHeight + 32
-        rowsCount = Math.ceil( list.parentElement.offsetHeight / rowHeight) - 1
-        initHeight = rowHeight + (overlay ? rowHeight * 0.75 : 0)
+    const loadMores = document.querySelectorAll('[mm-tool="list-load-more"]')
+    loadMores.forEach(loadMore => {
+        // DOM Elements
+        const list = loadMore.querySelector('[mm-list-element="list"]')
+        const moreButton = loadMore.querySelector('[mm-list-element="more-button"]')
+        const overlay = loadMore.querySelector('[mm-list-element="overlay"]') || null
+        // Variables
+        let rowHeight = list.children[0].offsetHeight + list.getAttribute('mm-list-gap') ? parseInt(list.getAttribute('mm-list-gap')) : 0
+        let rowsCount = Math.ceil( list.parentElement.offsetHeight / rowHeight) - 1
+        let initHeight = rowHeight + (overlay !== null ? rowHeight * 0.75 : 0)
+        let clicksCount = 0
+        // Functions
+        const setContainerHeight = () => {
+            list.parentElement.style.height = initHeight + (rowHeight * clicksCount) + 'px'
+        }
+        const setFinalState = () => {
+            overlay && removeElement(overlay)
+            moreButton && removeElement(moreButton)
+            list.parentElement.style.height = 'auto'
+        }
+        // Initial setup
         setContainerHeight()
-    }
-    // Click animation
-    moreButton.onclick = (event) => {
-        event.preventDefault()
-        clicksCount++
-        clicksCount === rowsCount ? setFinalState() : setContainerHeight()
-    }
+        // Responsiveness
+        window.onresize = () => {
+            list.parentElement.removeAttribute('style')
+            rowHeight = list.children[0].offsetHeight + 32
+            rowsCount = Math.ceil( list.parentElement.offsetHeight / rowHeight) - 1
+            initHeight = rowHeight + (overlay ? rowHeight * 0.75 : 0)
+            setContainerHeight()
+        }
+        // Click animation
+        moreButton.onclick = (event) => {
+            event.preventDefault()
+            clicksCount++
+            clicksCount === rowsCount ? setFinalState() : setContainerHeight()
+        }
+    })
 }

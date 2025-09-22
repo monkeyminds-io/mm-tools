@@ -1,0 +1,55 @@
+{
+  "name": "Load More",
+  "version": "1.0.0",
+  "description": "Height-based load more functionality that reveals list items by expanding container height with smooth animations",
+  "domain": "list",
+  "author": "MonkeyMinds",
+  "documentation": {
+    "readme": "README.md",
+    "examples": [
+      "examples/basic.html",
+      "examples/with-overlay.html"
+    ]
+  },
+  "files": {
+    "script": "index.js",
+    "minified": "index.min.js"
+  },
+  "attributes": {
+    "container": "mm-tool=\"list-load-more\"",
+    "list": "mm-list-element=\"list\"",
+    "button": "mm-list-element=\"more-button\"",
+    "overlay": "mm-list-element=\"overlay\"",
+    "gap": "mm-list-gap=\"{number}\""
+  },
+  "features": [
+    "Height-based revealing animation",
+    "Responsive design with window resize handling",
+    "Optional overlay fade effect",
+    "Custom gap support",
+    "Smooth animations",
+    "Custom events (mm:loadMore, mm:loadMoreComplete)",
+    "Public API for reset and destroy"
+  ],
+  "browser_support": [
+    "Chrome 60+",
+    "Firefox 55+",
+    "Safari 12+",
+    "Edge 79+"
+  ],
+  "dependencies": [
+    "MonkeyMinds shared utilities"
+  ],
+  "size": {
+    "js": "~8KB",
+    "minified": "~3KB"
+  },
+  "events": {
+    "mm:loadMore": "Fired when more button is clicked",
+    "mm:loadMoreComplete": "Fired when all content is revealed"
+  },
+  "api": {
+    "reset()": "Reset the load more state",
+    "destroy()": "Clean up event listeners and reset height"
+  }
+}
