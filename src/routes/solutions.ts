@@ -6,8 +6,9 @@ const router = Router();
 const solutionService = new SolutionService();
 
 // GET /v{version}/{domain}/{solution} - Get solution files
-router.get('/v:version/:domain/:solution', asyncHandler(async (req: Request, res: Response) => {
-  const { version, domain, solution } = req.params;
+router.get('/:version/:domain/:solution', asyncHandler(async (req: Request, res: Response) => {
+  const version = req.params.version;
+  const { domain, solution } = req.params;
   const { file } = req.query;
 
   try {
@@ -32,8 +33,9 @@ router.get('/v:version/:domain/:solution', asyncHandler(async (req: Request, res
 }));
 
 // GET /v{version}/{domain}/{solution}/manifest - Get solution manifest
-router.get('/v:version/:domain/:solution/manifest', asyncHandler(async (req: Request, res: Response) => {
-  const { version, domain, solution } = req.params;
+router.get('/:version/:domain/:solution/manifest', asyncHandler(async (req: Request, res: Response) => {
+  const version = req.params.version;
+  const { domain, solution } = req.params;
   
   try {
     const manifest = await solutionService.getSolutionManifest(version, domain, solution);
@@ -44,8 +46,9 @@ router.get('/v:version/:domain/:solution/manifest', asyncHandler(async (req: Req
 }));
 
 // GET /v{version}/{domain} - List solutions in domain
-router.get('/v:version/:domain', asyncHandler(async (req: Request, res: Response) => {
-  const { version, domain } = req.params;
+router.get('/:version/:domain', asyncHandler(async (req: Request, res: Response) => {
+  const version = req.params.version;
+  const { domain } = req.params;
   
   try {
     const solutions = await solutionService.getDomainSolutions(version, domain);
@@ -61,8 +64,8 @@ router.get('/v:version/:domain', asyncHandler(async (req: Request, res: Response
 }));
 
 // GET /v{version} - List all domains and solutions
-router.get('/v:version', asyncHandler(async (req: Request, res: Response) => {
-  const { version } = req.params;
+router.get('/:version', asyncHandler(async (req: Request, res: Response) => {
+  const version = req.params.version;
   
   try {
     const catalog = await solutionService.getVersionCatalog(version);
@@ -81,10 +84,10 @@ router.get('/', asyncHandler(async (_req: Request, res: Response) => {
       versions,
       endpoints: {
         health: '/health',
-        version_catalog: '/v{version}',
-        domain_solutions: '/v{version}/{domain}',
-        solution_files: '/v{version}/{domain}/{solution}',
-        solution_manifest: '/v{version}/{domain}/{solution}/manifest'
+        version_catalog: '/{version}',
+        domain_solutions: '/{version}/{domain}',
+        solution_files: '/{version}/{domain}/{solution}',
+        solution_manifest: '/{version}/{domain}/{solution}/manifest'
       }
     });
   } catch (error) {
