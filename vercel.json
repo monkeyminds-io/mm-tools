@@ -3,6 +3,7 @@
   "name": "monkeyminds-tools",
   "buildCommand": "npm run build",
   "installCommand": "npm install",
+  "outputDirectory": "./dist",
   "functions": {
     "api/index.js": {
       "maxDuration": 30
