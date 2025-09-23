@@ -2,8 +2,12 @@
   "version": 2,
   "name": "monkeyminds-tools",
   "buildCommand": "npm run build",
-  "outputDirectory": "dist",
   "installCommand": "npm install",
+  "functions": {
+    "api/index.js": {
+      "maxDuration": 30
+    }
+  },
   "rewrites": [
     {
       "source": "/(.*)",
