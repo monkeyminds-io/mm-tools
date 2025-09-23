@@ -5,7 +5,7 @@ const { execSync } = require('child_process');
 // Build configuration
 const CONFIG = {
   srcDir: './src/solutions',
-  distDir: './public',
+  distDir: './dist',
   sharedDir: './src/shared',
   tempDir: './temp-build'
 };
@@ -163,15 +163,16 @@ async function directoryExists(dirPath) {
 async function buildAllSolutions() {
   console.log('🏗️  Building MonkeyMinds Solutions...');
   
-  // Clean and create temp directory
+  // Clean and create temp directory (but leave dist alone!)
   try {
     await fs.rm(CONFIG.tempDir, { recursive: true, force: true });
-    await fs.rm(CONFIG.distDir, { recursive: true, force: true });
   } catch {
-    // Directories might not exist
+    // Directory might not exist
   }
   
   await fs.mkdir(CONFIG.tempDir, { recursive: true });
+  
+  // Create solutions directory in dist if it doesn't exist (preserve other dist files)
   await fs.mkdir(CONFIG.distDir, { recursive: true });
 
   try {
