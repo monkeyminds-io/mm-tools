@@ -5,7 +5,7 @@ const { execSync } = require('child_process');
 // Build configuration
 const CONFIG = {
   srcDir: './src/solutions',
-  distDir: './dist',
+  distDir: './public',
   sharedDir: './src/shared',
   tempDir: './temp-build'
 };
