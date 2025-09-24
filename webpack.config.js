@@ -35,18 +35,18 @@ function findSolutions() {
 }
 
 module.exports = (env, argv) => {
-  const isProduction = argv.mode === 'production';
+  const isMinified = env && env.minified === 'true';
+  const filename = isMinified ? '[name].min.js' : '[name].js';
   
   return {
-    mode: argv.mode || 'production',
+    mode: 'production',
     
     entry: findSolutions(),
     
     output: {
       path: path.resolve(__dirname, 'dist'),
-      filename: '[name].js',
-      clean: true,
-      // Remove UMD wrapper - just output plain JavaScript
+      filename: filename,
+      clean: !isMinified, // Only clean on first build
       globalObject: 'this'
     },
     
@@ -68,35 +68,44 @@ module.exports = (env, argv) => {
     },
     
     optimization: {
-      minimize: false, // We'll create separate builds for minified versions
-      splitChunks: false // Keep everything in one file per solution
+      minimize: isMinified === true, // Ensure boolean
+      minimizer: isMinified ? [
+        new TerserPlugin({
+          terserOptions: {
+            compress: {
+              drop_console: false,
+              drop_debugger: true,
+            },
+            format: {
+              comments: false,
+            },
+          },
+          extractComments: false,
+        })
+      ] : undefined,
+      splitChunks: false
     },
     
     target: 'web',
     
     plugins: [
-      // Custom plugin to create minified versions and latest aliases
+      // Create latest aliases
       {
         apply: (compiler) => {
-          compiler.hooks.afterEmit.tap('CreateMinifiedAndLatest', (compilation) => {
+          compiler.hooks.afterEmit.tap('CreateLatest', (compilation) => {
             const outputPath = compiler.options.output.path;
             
-            // Create latest aliases
             Object.keys(compilation.assets).forEach(filename => {
-              if (filename.endsWith('.js')) {
-                const fullPath = path.join(outputPath, filename);
+              if (filename.endsWith('.js') && filename.startsWith('v1-0/')) {
+                const latestFilename = filename.replace('v1-0/', 'latest/');
+                const latestDir = path.dirname(path.join(outputPath, latestFilename));
                 
-                // Create latest alias (copy v1-0 to latest for now)
-                if (filename.startsWith('v1-0/')) {
-                  const latestFilename = filename.replace('v1-0/', 'latest/');
-                  const latestDir = path.dirname(path.join(outputPath, latestFilename));
-                  
-                  if (!fs.existsSync(latestDir)) {
-                    fs.mkdirSync(latestDir, { recursive: true });
-                  }
-                  
-                  fs.copyFileSync(fullPath, path.join(outputPath, latestFilename));
+                if (!fs.existsSync(latestDir)) {
+                  fs.mkdirSync(latestDir, { recursive: true });
                 }
+                
+                const fullPath = path.join(outputPath, filename);
+                fs.copyFileSync(fullPath, path.join(outputPath, latestFilename));
               }
             });
           });
@@ -104,85 +113,6 @@ module.exports = (env, argv) => {
       }
     ],
     
-    devtool: false // No source maps for production
+    devtool: false
   };
-};
-
-// Separate Webpack config for minified versions
-module.exports.minified = {
-  mode: 'production',
-  
-  entry: findSolutions(),
-  
-  output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: '[name].min.js',
-    // Remove UMD wrapper for minified version too
-    globalObject: 'this'
-  },
-  
-  resolve: {
-    extensions: ['.ts', '.js'],
-    alias: {
-      '@shared': path.resolve(__dirname, 'src/shared')
-    }
-  },
-  
-  module: {
-    rules: [
-      {
-        test: /\.ts$/,
-        use: 'ts-loader',
-        exclude: /node_modules/
-      }
-    ]
-  },
-  
-  optimization: {
-    minimize: true,
-    minimizer: [
-      new TerserPlugin({
-        terserOptions: {
-          compress: {
-            drop_console: false, // Keep console.log for debugging
-            drop_debugger: true,
-          },
-          format: {
-            comments: false,
-          },
-        },
-        extractComments: false,
-      }),
-    ],
-    splitChunks: false
-  },
-  
-  target: 'web',
-  
-  plugins: [
-    // Create latest aliases for minified files too
-    {
-      apply: (compiler) => {
-        compiler.hooks.afterEmit.tap('CreateMinifiedLatest', (compilation) => {
-          const outputPath = compiler.options.output.path;
-          
-          Object.keys(compilation.assets).forEach(filename => {
-            if (filename.endsWith('.min.js') && filename.startsWith('v1-0/')) {
-              const latestFilename = filename.replace('v1-0/', 'latest/');
-              const latestDir = path.dirname(path.join(outputPath, latestFilename));
-              
-              if (!fs.existsSync(latestDir)) {
-                fs.mkdirSync(latestDir, { recursive: true });
-              }
-              
-              const fullPath = path.join(outputPath, filename);
-              fs.copyFileSync(fullPath, path.join(outputPath, latestFilename));
-            }
-          });
-        });
-      }
-    }
-  ],
-  
-  devtool: false
 };

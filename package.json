@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "description": "Static CDN for MonkeyMinds custom web solutions",
   "scripts": {
-    "build": "webpack --mode=production",
+    "build": "webpack --mode=production && webpack --mode=production --env minified=true",
     "build:dev": "webpack --mode=development --watch",
+    "build:min": "webpack --mode=production --env minified=true",
     "dev": "npm run build && npx serve dist -p 3000",
     "clean": "rm -rf dist",
     "lint": "eslint src/**/*.ts --fix",
@@ -19,6 +20,7 @@
     "@typescript-eslint/parser": "^6.13.2",
     "eslint": "^8.55.0",
     "serve": "^14.2.1",
+    "terser-webpack-plugin": "^5.3.9",
     "ts-loader": "^9.5.1",
     "typescript": "^5.3.3",
     "webpack": "^5.89.0",
