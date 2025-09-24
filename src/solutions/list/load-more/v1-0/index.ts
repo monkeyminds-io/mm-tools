@@ -4,7 +4,7 @@
 // MonkeyMinds Load More Solution - Reveals list items by expanding container height
 // =============================================================================
 
-import { removeElement, getAttributeNumber, debounce, getElementTotalHeight } from '../../../../shared/utils';
+import { removeElement, getAttributeNumber, debounce, getElementTotalHeight } from '@shared/utils';
 
 // =============================================================================
 // Types
