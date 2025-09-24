@@ -22,7 +22,7 @@ interface LoadMoreConfig {
     initHeight: number;
     clicksCount: number;
     gap: number;
-    totalItemsRevealed: number; // Track how much content is actually visible
+    isComplete: boolean;
 }
 
 // =============================================================================
@@ -72,7 +72,7 @@ class MonkeyMindsLoadMore {
             initHeight,
             clicksCount: 0,
             gap,
-            totalItemsRevealed: Math.max(1, rowsCount) // At least show first row
+            isComplete: false
         };
     }
 
@@ -118,80 +118,44 @@ class MonkeyMindsLoadMore {
     }
 
     private setFinalState(): void {
-        // Don't actually remove elements - just hide them and track state
+        // Mark as complete
+        this.config.isComplete = true;
+        
+        // Remove overlay and button with animation
         if (this.elements.overlay) {
-            this.elements.overlay.style.display = 'none';
+            removeElement(this.elements.overlay);
         }
-        this.elements.moreButton.style.display = 'none';
+        removeElement(this.elements.moreButton);
 
         // Set container to auto height
         setTimeout(() => {
             this.elements.list.parentElement!.style.height = 'auto';
         }, 300);
 
-        // Track that all content is revealed
-        this.config.totalItemsRevealed = this.elements.list.children.length;
-
         // Dispatch completion event
         this.elements.container.dispatchEvent(new CustomEvent('mm:loadMoreComplete', {
-            detail: { 
-                totalClicks: this.config.clicksCount,
-                totalItems: this.config.totalItemsRevealed 
-            }
+            detail: { totalClicks: this.config.clicksCount }
         }));
     }
 
     private handleResize(): void {
-        // Reset container height for recalculation
-        this.elements.list.parentElement!.style.height = 'auto';
-        
-        // Recalculate configuration for new viewport
-        const newConfig = this.calculateConfig();
-        const currentlyVisibleItems = this.config.totalItemsRevealed;
-        
-        // Check if we need to show more/less content for new viewport
-        if (currentlyVisibleItems > newConfig.totalItemsRevealed) {
-            // New viewport shows less → need to restart load more
-            this.restoreLoadMoreState(newConfig, currentlyVisibleItems);
-        } else if (currentlyVisibleItems <= newConfig.totalItemsRevealed) {
-            // New viewport can show same or more → adjust accordingly
-            this.config = {
-                ...newConfig,
-                totalItemsRevealed: currentlyVisibleItems,
-                clicksCount: Math.ceil((currentlyVisibleItems - newConfig.totalItemsRevealed) / 3) // Estimate clicks needed
-            };
-            
-            if (currentlyVisibleItems >= this.elements.list.children.length) {
-                // All content still visible → keep final state
-                return;
-            }
-            
-            this.setContainerHeight();
+        // Don't handle resize if load more is complete
+        if (this.config.isComplete) {
+            return;
         }
-    }
 
-    private restoreLoadMoreState(newConfig: LoadMoreConfig, itemsToShow: number): void {
-        // Restore button and overlay if they were removed
-        if (!document.contains(this.elements.moreButton)) {
-            // Note: In real implementation, you'd need to restore from template or recreation
-            console.log('Load more button needs restoration for responsive behavior');
-        }
+        // Reset container height for recalculation
+        this.elements.list.parentElement!.removeAttribute('style');
         
-        if (this.elements.overlay && !document.contains(this.elements.overlay)) {
-            // Similarly, restore overlay
-            console.log('Overlay needs restoration for responsive behavior');
-        }
-        
-        // Calculate how many clicks needed to show current content in new viewport
-        const itemsPerClick = 3; // Or get from config
-        const clicksNeeded = Math.ceil((itemsToShow - newConfig.totalItemsRevealed) / itemsPerClick);
-        
-        this.config = {
-            ...newConfig,
-            totalItemsRevealed: itemsToShow,
-            clicksCount: Math.max(0, clicksNeeded)
+        // Recalculate configuration for new viewport, preserving progress
+        const newConfig = this.calculateConfig();
+        this.config = { 
+            ...newConfig, 
+            clicksCount: this.config.clicksCount,
+            isComplete: this.config.isComplete 
         };
         
+        // Reapply height based on current progress
         this.setContainerHeight();
     }
 
