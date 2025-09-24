@@ -35,7 +35,7 @@ async function buildStaticFiles() {
 }
 
 /**
- * Build individual solution as static file
+ * Build individual solution as browser-ready static file
  */
 async function buildSolution(domain, solution, version) {
   console.log(`🔨 Building ${domain}/${solution} (${version})...`);
@@ -50,31 +50,15 @@ async function buildSolution(domain, solution, version) {
   const sourceFile = path.join(sourceDir, 'index.ts');
   let solutionCode = await fs.readFile(sourceFile, 'utf8');
   
-  // Inline shared utilities (simple approach)
-  solutionCode = await inlineSharedUtilities(solutionCode);
-  
-  // Create temporary bundled file
-  const tempFile = path.join(CONFIG.tempDir, `${domain}-${solution}-${version}.ts`);
-  await fs.writeFile(tempFile, solutionCode);
-  
-  // Compile TypeScript to JavaScript
-  const jsOutput = path.join(CONFIG.tempDir, `${domain}-${solution}-${version}.js`);
-  execSync(`npx tsc ${tempFile} --outFile ${jsOutput} --target ES2020 --module none --lib ES2020,DOM --esModuleInterop`, 
-    { stdio: 'pipe' });
-  
-  // Read compiled JavaScript
-  let compiledJs = await fs.readFile(jsOutput, 'utf8');
-  
-  // Add MonkeyMinds branding header
-  const header = createFileHeader(domain, solution, version);
-  compiledJs = header + '\n' + compiledJs;
+  // Create browser-compatible bundle
+  const browserBundle = await createBrowserBundle(solutionCode, domain, solution, version);
   
   // Write the main file
   const mainFile = path.join(outputDir, `${solution}.js`);
-  await fs.writeFile(mainFile, compiledJs);
+  await fs.writeFile(mainFile, browserBundle);
   
   // Create minified version
-  const minifiedJs = await minifyCode(compiledJs);
+  const minifiedJs = await minifyCode(browserBundle);
   const minFile = path.join(outputDir, `${solution}.min.js`);
   await fs.writeFile(minFile, minifiedJs);
   
@@ -99,43 +83,122 @@ async function buildSolution(domain, solution, version) {
 }
 
 /**
- * Inline shared utilities into solution code
+ * Create browser-compatible bundle
  */
-async function inlineSharedUtilities(solutionCode) {
-  // Find import statements for shared utilities
-  const importRegex = /import\s*{([^}]+)}\s*from\s*['"](\.\.\/\.\.\/\.\.\/shared\/utils|\.\.\/\.\.\/\.\.\/shared\/utils\/index)['"];?/g;
+async function createBrowserBundle(solutionCode, domain, solution, version) {
+  // Remove TypeScript imports and replace with inlined code
+  let processedCode = await inlineUtilities(solutionCode);
   
-  let processedCode = solutionCode;
+  // Remove TypeScript type annotations
+  processedCode = removeTypeAnnotations(processedCode);
+  
+  // Wrap in IIFE for browser compatibility
+  const header = createFileHeader(domain, solution, version);
+  
+  const browserBundle = `${header}
+(function() {
+    'use strict';
+    
+    ${processedCode}
+    
+})();`;
+  
+  return browserBundle;
+}
+
+/**
+ * Inline utilities and remove imports
+ */
+async function inlineUtilities(code) {
+  let processedCode = code;
+  
+  // Find and replace import statements
+  const importRegex = /import\s*{([^}]+)}\s*from\s*['"](\.\.\/\.\.\/\.\.\/shared\/utils|\.\.\/\.\.\/\.\.\/shared\/utils\/index)['"];?\s*/g;
+  
   let match;
-  
-  while ((match = importRegex.exec(solutionCode)) !== null) {
+  while ((match = importRegex.exec(code)) !== null) {
     const importedFunctions = match[1].split(',').map(f => f.trim());
     
-    // Read shared utilities
+    // Read and process utilities
     const utilsContent = await fs.readFile('./src/shared/utils/index.ts', 'utf8');
-    
-    // Extract needed functions
-    let inlinedCode = '// === Inlined MonkeyMinds Utilities ===\n';
+    let inlinedCode = '';
     
     for (const funcName of importedFunctions) {
-      // Find the function definition
-      const funcRegex = new RegExp(
-        `export\\s+const\\s+${funcName}\\s*=\\s*\\([^)]*\\)\\s*:\\s*[^=]*=>\\s*{[^}]*(?:{[^}]*}[^}]*)*}`, 'g'
-      );
-      const funcMatch = utilsContent.match(funcRegex);
-      
-      if (funcMatch) {
-        // Remove 'export' and add to inlined code
-        const inlinedFunc = funcMatch[0].replace('export const', 'const');
-        inlinedCode += inlinedFunc + '\n\n';
+      const funcCode = extractFunction(utilsContent, funcName);
+      if (funcCode) {
+        // Remove TypeScript annotations and export
+        const cleanFunc = removeTypeAnnotations(funcCode).replace('export const', 'const');
+        inlinedCode += cleanFunc + '\n\n';
       }
     }
     
-    // Replace import with inlined code
+    // Replace import with inlined utilities
     processedCode = processedCode.replace(match[0], inlinedCode);
   }
   
   return processedCode;
+}
+
+/**
+ * Extract function from utilities file
+ */
+function extractFunction(utilsContent, funcName) {
+  // Match function with proper bracket counting
+  const funcStart = utilsContent.indexOf(`export const ${funcName}`);
+  if (funcStart === -1) return null;
+  
+  let bracketCount = 0;
+  let inFunction = false;
+  let funcEnd = funcStart;
+  
+  for (let i = funcStart; i < utilsContent.length; i++) {
+    const char = utilsContent[i];
+    
+    if (char === '=' && !inFunction) {
+      inFunction = true;
+    }
+    
+    if (inFunction) {
+      if (char === '{') bracketCount++;
+      if (char === '}') bracketCount--;
+      
+      if (bracketCount === 0 && char === '}') {
+        funcEnd = i + 1;
+        break;
+      }
+    }
+  }
+  
+  return utilsContent.slice(funcStart, funcEnd);
+}
+
+/**
+ * Remove TypeScript type annotations
+ */
+function removeTypeAnnotations(code) {
+  return code
+    // Remove type annotations from parameters: (param: Type) => (param)
+    .replace(/\(\s*([^:)]+):\s*[^),]+/g, '($1')
+    .replace(/,\s*([^:,)]+):\s*[^),]+/g, ', $1')
+    
+    // Remove function return types: ): Type => ):
+    .replace(/\):\s*[^=>{]+\s*=>/g, ') =>')
+    .replace(/\):\s*[^=>{]+\s*\{/g, ') {')
+    
+    // Remove variable type annotations: const x: Type = => const x =
+    .replace(/:\s*[^=]+(\s*=)/g, '$1')
+    
+    // Remove interface declarations
+    .replace(/interface\s+\w+\s*{[^}]*}/g, '')
+    
+    // Remove type declarations
+    .replace(/type\s+\w+\s*=[^;]+;/g, '')
+    
+    // Remove as Type assertions
+    .replace(/\s+as\s+\w+/g, '')
+    
+    // Clean up extra whitespace
+    .replace(/\n\s*\n\s*\n/g, '\n\n');
 }
 
 /**
