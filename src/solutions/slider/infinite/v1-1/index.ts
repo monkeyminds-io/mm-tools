@@ -243,7 +243,9 @@ class InfiniteSlider {
     this.gsap.set(this.container, {
       position: 'relative',
       overflow: 'visible',
-      height: `${diameter}px`
+      display: 'flex',
+      alignItems: 'flex-start',
+      justifyContent: 'center'
     });
 
     // Track is the rotating wheel
