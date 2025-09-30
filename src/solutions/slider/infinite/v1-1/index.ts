@@ -302,47 +302,49 @@ class InfiniteSlider {
     const DEG2RAD = Math.PI / 180;
 
     this.items.forEach((item, i) => {
-      const angle = i * angleStep;
-      const x = center + radius * Math.sin(angle * DEG2RAD);
-      const y = center - radius * Math.cos(angle * DEG2RAD);
+        const angle = i * angleStep;
+        
+        // Calculate position on circle (this is where item CENTER should be)
+        const x = center + radius * Math.sin(angle * DEG2RAD);
+        const y = center - radius * Math.cos(angle * DEG2RAD);
 
-      // Determine anchor point and rotation based on arc position
-      let itemRotation = 0;
+        // Determine rotation based on arc position
+        let itemRotation = 0;
 
-      switch (this.config?.arcPosition) {
+        switch (this.config?.arcPosition) {
         case 'top':
-          itemRotation = angle;
-          break;
+            itemRotation = angle;
+            break;
         case 'bottom':
-          itemRotation = angle + 180;
-          break;
+            itemRotation = angle + 180;
+            break;
         case 'left':
-          itemRotation = angle + 90;
-          break;
+            itemRotation = angle + 90;
+            break;
         case 'right':
-          itemRotation = angle - 90;
-          break;
-      }
+            itemRotation = angle - 90;
+            break;
+        }
 
-      this.gsap.set(item, {
+        this.gsap.set(item, {
         position: 'absolute',
-        x: x,
-        y: y,
-        xPercent: -50,
-        yPercent: -50,
+        left: x,
+        top: y,
+        xPercent: -50,  // Center horizontally
+        yPercent: -50,  // Center vertically
         rotation: itemRotation,
         transformOrigin: 'center center'
-      });
+        });
 
-      // Store angle for optional effects
-      (item as any)._angle = angle;
+        // Store angle for optional effects
+        (item as any)._angle = angle;
     });
 
     // Apply optional scale based on position
     if (this.config.scale) {
-      this.updateItemScales();
+        this.updateItemScales();
     }
-  }
+}
 
   private updateItemScales(): void {
     if (!this.config) return;
