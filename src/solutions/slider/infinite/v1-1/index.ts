@@ -307,29 +307,29 @@ class InfiniteSlider {
       const y = center - radius * Math.cos(angle * DEG2RAD);
 
       // Determine anchor point and rotation based on arc position
-      let xPercent = -50;
-      let yPercent = -50;
+      //let xPercent = -50;
+      //let yPercent = -50;
       let itemRotation = 0;
 
       switch (this.config?.arcPosition) {
         case 'top':
-          xPercent = -50;
-          yPercent = 0;
+          //xPercent = -50;
+          //yPercent = 0;
           itemRotation = angle;
           break;
         case 'bottom':
-          xPercent = -50;
-          yPercent = -100;
+          //xPercent = -50;
+          //yPercent = -100;
           itemRotation = angle + 180;
           break;
         case 'left':
-          xPercent = -100;
-          yPercent = -50;
+          //xPercent = -100;
+          //yPercent = -50;
           itemRotation = angle + 90;
           break;
         case 'right':
-          xPercent = 0;
-          yPercent = -50;
+          //xPercent = 0;
+          //yPercent = -50;
           itemRotation = angle - 90;
           break;
       }
@@ -338,9 +338,10 @@ class InfiniteSlider {
         position: 'absolute',
         x: x,
         y: y,
-        xPercent: xPercent,
-        yPercent: yPercent,
-        rotation: itemRotation
+        //xPercent: xPercent,
+        //yPercent: yPercent,
+        rotation: itemRotation,
+        transformOrigin: '50% 50%'
       });
 
       // Store angle for optional effects
