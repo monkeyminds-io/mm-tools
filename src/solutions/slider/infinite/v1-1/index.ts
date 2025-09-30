@@ -341,7 +341,7 @@ class InfiniteSlider {
         //xPercent: xPercent,
         //yPercent: yPercent,
         rotation: itemRotation,
-        transformOrigin: '50% 50%'
+        transformOrigin: 'center center'
       });
 
       // Store angle for optional effects
