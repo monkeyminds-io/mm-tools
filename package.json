@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "Static CDN for MonkeyMinds custom web solutions",
   "scripts": {
-    "build": "webpack --mode=production && webpack --mode=production --env minified=true",
+    "build": "webpack --mode=production --env minified=true && npm run build:css",
+    "build:css": "npx @tailwindcss/cli -i ./src/styles/input.css -o ./dist/styles/monkeyminds.css --minify",
     "build:dev": "webpack --mode=development --watch",
     "build:min": "webpack --mode=production --env minified=true",
     "dev": "npm run build && npx serve dist -p 3000",
@@ -11,7 +12,13 @@
     "lint": "eslint src/**/*.ts --fix",
     "type-check": "tsc --noEmit"
   },
-  "keywords": ["cdn", "static", "solutions", "typescript", "monkeyminds"],
+  "keywords": [
+    "cdn",
+    "static",
+    "solutions",
+    "typescript",
+    "monkeyminds"
+  ],
   "author": "MonkeyMinds",
   "license": "MIT",
   "devDependencies": {
@@ -20,6 +27,7 @@
     "@typescript-eslint/parser": "^6.13.2",
     "eslint": "^8.55.0",
     "serve": "^14.2.1",
+    "tailwindcss": "^3.4.17",
     "terser-webpack-plugin": "^5.3.9",
     "ts-loader": "^9.5.1",
     "typescript": "^5.3.3",
@@ -28,5 +36,8 @@
   },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@tailwindcss/cli": "^4.1.13"
   }
 }

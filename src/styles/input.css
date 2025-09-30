@@ -1,0 +1,62 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Merriweather:ital,wght@0,300..900;1,300..900&display=swap');
+
+/* MonkeyMinds Theme Configuration */
+@theme {
+  /* Custom Colors */
+  --color-monkeyminds-50: #f0f9ff;
+  --color-monkeyminds-100: #e0f2fe;
+  --color-monkeyminds-200: #bae6fd;
+  --color-monkeyminds-300: #7dd3fc;
+  --color-monkeyminds-400: #38bdf8;
+  --color-monkeyminds-500: #0ea5e9;
+  --color-monkeyminds-600: #0284c7;
+  --color-monkeyminds-700: #0369a1;
+  --color-monkeyminds-800: #075985;
+  --color-monkeyminds-900: #0c4a6e;
+  --color-monkeyminds-950: #082f49;
+
+  /* Custom Fonts */
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-serif: 'Merriweather', Georgia, serif;
+}
+
+/* MonkeyMinds Base Styles */
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    line-height: 1.6;
+    color: #1e293b;
+    background-color: #f8fafc;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif);
+    margin-bottom: 0.5rem;
+    color: #0f172a;
+    font-weight: 600;
+  }
+
+  a {
+    color: var(--color-monkeyminds-500);
+    text-decoration: none;
+    transition: color 150ms ease;
+  }
+
+  a:hover {
+    color: var(--color-monkeyminds-600);
+  }
+
+  button {
+    font-family: var(--font-sans);
+  }
+}
+
+/* MonkeyMinds Custom Utilities */
+@layer utilities {
+  .text-gradient-monkeyminds {
+    background: linear-gradient(to right, var(--color-monkeyminds-500), var(--color-monkeyminds-700));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}

@@ -89,6 +89,70 @@ module.exports = (env, argv) => {
     target: 'web',
     
     plugins: [
+      // Copy examples to dist/examples
+      {
+        apply: (compiler) => {
+          compiler.hooks.afterEmit.tap('CopyExamples', async (compilation) => {
+            const outputPath = compiler.options.output.path;
+            const examplesOutputPath = path.join(outputPath, 'examples');
+            
+            // Copy examples for each solution
+            const solutionsDir = path.resolve(__dirname, 'src/solutions');
+            const copyExample = async (domain, solution, version) => {
+              const exampleSource = path.join(solutionsDir, domain, solution, version, 'examples');
+              const exampleTarget = path.join(examplesOutputPath, version, domain, solution);
+              
+              if (fs.existsSync(exampleSource)) {
+                if (!fs.existsSync(exampleTarget)) {
+                  fs.mkdirSync(exampleTarget, { recursive: true });
+                }
+                
+                // Copy all example files
+                const exampleFiles = fs.readdirSync(exampleSource);
+                exampleFiles.forEach(file => {
+                  let content = fs.readFileSync(path.join(exampleSource, file), 'utf8');
+                  
+                  // Update script src path and CSS path in HTML files
+                  if (file.endsWith('.html')) {
+                    content = content.replace(
+                      'src="../infinite.js"',
+                      `src="../../${version}/${domain}/${solution}.js"`
+                    ).replace(
+                      'href="../../../styles/monkeyminds.css"',
+                      `href="../../../styles/monkeyminds.css"`
+                    );
+                  }
+                  
+                  fs.writeFileSync(path.join(exampleTarget, file), content);
+                });
+                
+                console.log(`📄 Copied examples for ${domain}/${solution}/${version}`);
+              }
+            };
+            
+            // Find all solutions and copy their examples
+            const domains = fs.readdirSync(solutionsDir, { withFileTypes: true })
+              .filter(dirent => dirent.isDirectory());
+              
+            for (const domain of domains) {
+              const domainPath = path.join(solutionsDir, domain.name);
+              const solutions = fs.readdirSync(domainPath, { withFileTypes: true })
+                .filter(dirent => dirent.isDirectory());
+                
+              for (const solution of solutions) {
+                const solutionPath = path.join(domainPath, solution.name);
+                const versions = fs.readdirSync(solutionPath, { withFileTypes: true })
+                  .filter(dirent => dirent.isDirectory() && dirent.name.startsWith('v'));
+                  
+                for (const version of versions) {
+                  await copyExample(domain.name, solution.name, version.name);
+                }
+              }
+            }
+          });
+        }
+      },
+      
       // Create latest aliases
       {
         apply: (compiler) => {
@@ -106,6 +170,32 @@ module.exports = (env, argv) => {
                 
                 const fullPath = path.join(outputPath, filename);
                 fs.copyFileSync(fullPath, path.join(outputPath, latestFilename));
+                
+                // Also copy examples to latest
+                const exampleSource = path.join(outputPath, 'examples', 'v1-0');
+                const exampleTarget = path.join(outputPath, 'examples', 'latest');
+                
+                if (fs.existsSync(exampleSource) && !fs.existsSync(exampleTarget)) {
+                  fs.mkdirSync(exampleTarget, { recursive: true });
+                  const copyDirRecursive = (src, dest) => {
+                    const entries = fs.readdirSync(src, { withFileTypes: true });
+                    entries.forEach(entry => {
+                      const srcPath = path.join(src, entry.name);
+                      const destPath = path.join(dest, entry.name);
+                      if (entry.isDirectory()) {
+                        fs.mkdirSync(destPath, { recursive: true });
+                        copyDirRecursive(srcPath, destPath);
+                      } else {
+                        let content = fs.readFileSync(srcPath, 'utf8');
+                        if (entry.name.endsWith('.html')) {
+                          content = content.replace(/v1-0\//g, 'latest/');
+                        }
+                        fs.writeFileSync(destPath, content);
+                      }
+                    });
+                  };
+                  copyDirRecursive(exampleSource, exampleTarget);
+                }
               }
             });
           });
