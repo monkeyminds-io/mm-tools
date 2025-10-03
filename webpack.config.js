@@ -1,6 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const TerserPlugin = require('terser-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 // Dynamically find all solutions
 function findSolutions() {
@@ -200,7 +201,17 @@ module.exports = (env, argv) => {
             });
           });
         }
-      }
+      },
+      // Copy assets using copy-webpack-plugin
+      new CopyWebpackPlugin({
+        patterns: [
+          {
+            from: 'src/assets',
+            to: 'assets',
+            noErrorOnMissing: true
+          }
+        ]
+      }),
     ],
     
     devtool: false
