@@ -181,6 +181,7 @@ class MonkeyMindsLoadMore {
 // Auto-initialization
 // =============================================================================
 function initializeLoadMore(): void {
+    // TODO Separate selector for mm-tool=list and mm-list-type=load-more
     const containers = document.querySelectorAll('[mm-tool="list-load-more"]');
     
     containers.forEach((container) => {
