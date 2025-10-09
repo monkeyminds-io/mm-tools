@@ -3,32 +3,43 @@ const fs = require('fs');
 const TerserPlugin = require('terser-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
-// Dynamically find all solutions
+// Dynamically find all solutions (supports both old and new structures)
 function findSolutions() {
   const solutions = {};
   const solutionsDir = path.resolve(__dirname, 'src/solutions');
   
-  // Walk through domain/solution/version structure
-  const domains = fs.readdirSync(solutionsDir, { withFileTypes: true })
+  const solutionDirs = fs.readdirSync(solutionsDir, { withFileTypes: true })
     .filter(dirent => dirent.isDirectory());
     
-  domains.forEach(domain => {
-    const domainPath = path.join(solutionsDir, domain.name);
-    const solutionDirs = fs.readdirSync(domainPath, { withFileTypes: true })
+  solutionDirs.forEach(solution => {
+    const solutionPath = path.join(solutionsDir, solution.name);
+    const entries = fs.readdirSync(solutionPath, { withFileTypes: true })
       .filter(dirent => dirent.isDirectory());
-      
-    solutionDirs.forEach(solution => {
-      const solutionPath = path.join(domainPath, solution.name);
-      const versionDirs = fs.readdirSync(solutionPath, { withFileTypes: true })
-        .filter(dirent => dirent.isDirectory() && dirent.name.startsWith('v'));
-        
-      versionDirs.forEach(version => {
-        const entryFile = path.join(solutionPath, version.name, 'index.ts');
+    
+    entries.forEach(entry => {
+      // Check if this is a version directory (new structure: slider/v1-2/)
+      if (entry.name.startsWith('v')) {
+        const entryFile = path.join(solutionPath, entry.name, 'index.ts');
         if (fs.existsSync(entryFile)) {
-          const key = `${version.name}/${domain.name}/${solution.name}`;
+          // Output: v1-2/slider/index.js
+          const key = `${entry.name}/${solution.name}/index`;
           solutions[key] = entryFile;
         }
-      });
+      } else {
+        // Old structure: slider/infinite/v1-1/
+        const subSolutionPath = path.join(solutionPath, entry.name);
+        const versionDirs = fs.readdirSync(subSolutionPath, { withFileTypes: true })
+          .filter(dirent => dirent.isDirectory() && dirent.name.startsWith('v'));
+          
+        versionDirs.forEach(version => {
+          const entryFile = path.join(subSolutionPath, version.name, 'index.ts');
+          if (fs.existsSync(entryFile)) {
+            // Output: v1-1/slider/infinite.js
+            const key = `${version.name}/${solution.name}/${entry.name}`;
+            solutions[key] = entryFile;
+          }
+        });
+      }
     });
   });
   
@@ -69,7 +80,7 @@ module.exports = (env, argv) => {
     },
     
     optimization: {
-      minimize: isMinified === true, // Ensure boolean
+      minimize: isMinified === true,
       minimizer: isMinified ? [
         new TerserPlugin({
           terserOptions: {
@@ -90,6 +101,17 @@ module.exports = (env, argv) => {
     target: 'web',
     
     plugins: [
+      // Copy assets using copy-webpack-plugin
+      new CopyWebpackPlugin({
+        patterns: [
+          {
+            from: 'src/assets',
+            to: 'assets',
+            noErrorOnMissing: true
+          }
+        ]
+      }),
+      
       // Copy examples to dist/examples
       {
         apply: (compiler) => {
@@ -97,56 +119,82 @@ module.exports = (env, argv) => {
             const outputPath = compiler.options.output.path;
             const examplesOutputPath = path.join(outputPath, 'examples');
             
-            // Copy examples for each solution
+            // Copy examples for each solution (supports both old and new structures)
             const solutionsDir = path.resolve(__dirname, 'src/solutions');
-            const copyExample = async (domain, solution, version) => {
-              const exampleSource = path.join(solutionsDir, domain, solution, version, 'examples');
-              const exampleTarget = path.join(examplesOutputPath, version, domain, solution);
-              
-              if (fs.existsSync(exampleSource)) {
-                if (!fs.existsSync(exampleTarget)) {
-                  fs.mkdirSync(exampleTarget, { recursive: true });
-                }
-                
-                // Copy all example files
-                const exampleFiles = fs.readdirSync(exampleSource);
-                exampleFiles.forEach(file => {
-                  let content = fs.readFileSync(path.join(exampleSource, file), 'utf8');
-                  
-                  // Update script src path and CSS path in HTML files
-                  if (file.endsWith('.html')) {
-                    content = content.replace(
-                      'src="../infinite.js"',
-                      `src="../../${version}/${domain}/${solution}.js"`
-                    ).replace(
-                      'href="../../../styles/monkeyminds.css"',
-                      `href="../../../styles/monkeyminds.css"`
-                    );
-                  }
-                  
-                  fs.writeFileSync(path.join(exampleTarget, file), content);
-                });
-                
-                console.log(`📄 Copied examples for ${domain}/${solution}/${version}`);
-              }
-            };
             
-            // Find all solutions and copy their examples
-            const domains = fs.readdirSync(solutionsDir, { withFileTypes: true })
+            const solutions = fs.readdirSync(solutionsDir, { withFileTypes: true })
               .filter(dirent => dirent.isDirectory());
               
-            for (const domain of domains) {
-              const domainPath = path.join(solutionsDir, domain.name);
-              const solutions = fs.readdirSync(domainPath, { withFileTypes: true })
+            for (const solution of solutions) {
+              const solutionPath = path.join(solutionsDir, solution.name);
+              const entries = fs.readdirSync(solutionPath, { withFileTypes: true })
                 .filter(dirent => dirent.isDirectory());
-                
-              for (const solution of solutions) {
-                const solutionPath = path.join(domainPath, solution.name);
-                const versions = fs.readdirSync(solutionPath, { withFileTypes: true })
-                  .filter(dirent => dirent.isDirectory() && dirent.name.startsWith('v'));
+              
+              for (const entry of entries) {
+                // Check if this is a version directory (new structure)
+                if (entry.name.startsWith('v')) {
+                  const exampleSource = path.join(solutionPath, entry.name, 'examples');
+                  const exampleTarget = path.join(examplesOutputPath, entry.name, solution.name);
                   
-                for (const version of versions) {
-                  await copyExample(domain.name, solution.name, version.name);
+                  if (fs.existsSync(exampleSource)) {
+                    if (!fs.existsSync(exampleTarget)) {
+                      fs.mkdirSync(exampleTarget, { recursive: true });
+                    }
+                    
+                    const exampleFiles = fs.readdirSync(exampleSource);
+                    exampleFiles.forEach(file => {
+                      let content = fs.readFileSync(path.join(exampleSource, file), 'utf8');
+                      
+                      if (file.endsWith('.html')) {
+                        content = content.replace(
+                          /src=".*\/index\.js"/g,
+                          `src="../../../${entry.name}/${solution.name}/index.js"`
+                        ).replace(
+                          'href="../../../../styles/monkeyminds.css"',
+                          `href="../../../styles/monkeyminds.css"`
+                        );
+                      }
+                      
+                      fs.writeFileSync(path.join(exampleTarget, file), content);
+                    });
+                    
+                    console.log(`📄 Copied examples for ${solution.name}/${entry.name}`);
+                  }
+                } else {
+                  // Old structure: slider/infinite/v1-1/
+                  const subSolutionPath = path.join(solutionPath, entry.name);
+                  const versions = fs.readdirSync(subSolutionPath, { withFileTypes: true })
+                    .filter(dirent => dirent.isDirectory() && dirent.name.startsWith('v'));
+                    
+                  for (const version of versions) {
+                    const exampleSource = path.join(subSolutionPath, version.name, 'examples');
+                    const exampleTarget = path.join(examplesOutputPath, version.name, solution.name, entry.name);
+                    
+                    if (fs.existsSync(exampleSource)) {
+                      if (!fs.existsSync(exampleTarget)) {
+                        fs.mkdirSync(exampleTarget, { recursive: true });
+                      }
+                      
+                      const exampleFiles = fs.readdirSync(exampleSource);
+                      exampleFiles.forEach(file => {
+                        let content = fs.readFileSync(path.join(exampleSource, file), 'utf8');
+                        
+                        if (file.endsWith('.html')) {
+                          content = content.replace(
+                            'src="../infinite.js"',
+                            `src="../../../${version.name}/${solution.name}/${entry.name}.js"`
+                          ).replace(
+                            'href="../../../../styles/monkeyminds.css"',
+                            `href="../../../../styles/monkeyminds.css"`
+                          );
+                        }
+                        
+                        fs.writeFileSync(path.join(exampleTarget, file), content);
+                      });
+                      
+                      console.log(`📄 Copied examples for ${solution.name}/${entry.name}/${version.name}`);
+                    }
+                  }
                 }
               }
             }
@@ -178,14 +226,14 @@ module.exports = (env, argv) => {
                 
                 if (fs.existsSync(exampleSource) && !fs.existsSync(exampleTarget)) {
                   fs.mkdirSync(exampleTarget, { recursive: true });
-                  const copyDirRecursive = (src, dest) => {
+                  const copyLatestExamples = (src, dest) => {
                     const entries = fs.readdirSync(src, { withFileTypes: true });
                     entries.forEach(entry => {
                       const srcPath = path.join(src, entry.name);
                       const destPath = path.join(dest, entry.name);
                       if (entry.isDirectory()) {
                         fs.mkdirSync(destPath, { recursive: true });
-                        copyDirRecursive(srcPath, destPath);
+                        copyLatestExamples(srcPath, destPath);
                       } else {
                         let content = fs.readFileSync(srcPath, 'utf8');
                         if (entry.name.endsWith('.html')) {
@@ -195,23 +243,13 @@ module.exports = (env, argv) => {
                       }
                     });
                   };
-                  copyDirRecursive(exampleSource, exampleTarget);
+                  copyLatestExamples(exampleSource, exampleTarget);
                 }
               }
             });
           });
         }
-      },
-      // Copy assets using copy-webpack-plugin
-      new CopyWebpackPlugin({
-        patterns: [
-          {
-            from: 'src/assets',
-            to: 'assets',
-            noErrorOnMissing: true
-          }
-        ]
-      }),
+      }
     ],
     
     devtool: false

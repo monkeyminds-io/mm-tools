@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Static CDN for MonkeyMinds custom web solutions",
   "scripts": {
-    "build": "webpack --mode=production --env minified=true && npm run build:css",
+    "build": "npm run clean && webpack --mode=production && webpack --mode=production --env minified=true && npm run build:css",
     "build:css": "npx @tailwindcss/cli -i ./src/styles/input.css -o ./dist/styles/monkeyminds.css --minify",
     "build:dev": "webpack --mode=development --watch",
     "build:min": "webpack --mode=production --env minified=true",

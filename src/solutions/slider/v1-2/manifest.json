@@ -1,0 +1,132 @@
+{
+  "name": "Slider",
+  "version": "1.2.0",
+  "solution": "slider",
+  "description": "Unified slider solution with multiple modes: marquee, curved, and discrete",
+  "modes": [
+    "marquee",
+    "curved",
+    "discrete"
+  ],
+  "dependencies": {
+    "gsap": "^3.12.0"
+  },
+  "attributes": {
+    "container": {
+      "mm-tool": {
+        "required": true,
+        "value": "slider",
+        "description": "Identifies the slider container"
+      },
+      "mm-slider-mode": {
+        "required": false,
+        "type": "string",
+        "values": ["marquee", "curved", "discrete"],
+        "default": "marquee",
+        "description": "Slider mode"
+      },
+      "mm-slider-speed": {
+        "required": false,
+        "type": "number",
+        "default": 50,
+        "description": "Animation speed (pixels per second for marquee)"
+      },
+      "mm-slider-direction": {
+        "required": false,
+        "type": "string",
+        "values": ["left", "right"],
+        "default": "left",
+        "description": "Animation direction"
+      },
+      "mm-slider-gap": {
+        "required": false,
+        "type": "number",
+        "default": 24,
+        "description": "Gap between items (pixels for marquee, degrees for curved)"
+      },
+      "mm-slider-pauseonhover": {
+        "required": false,
+        "type": "boolean",
+        "default": true,
+        "description": "Pause animation on hover"
+      }
+    },
+    "curvedMode": {
+      "mm-slider-radius": {
+        "required": false,
+        "type": "number",
+        "default": 400,
+        "description": "Circle radius in pixels"
+      },
+      "mm-slider-arc-position": {
+        "required": false,
+        "type": "string",
+        "values": ["top", "bottom", "left", "right"],
+        "default": "top",
+        "description": "Arc position"
+      },
+      "mm-slider-perspective": {
+        "required": false,
+        "type": "boolean",
+        "default": false,
+        "description": "Enable 3D perspective"
+      },
+      "mm-slider-perspective-depth": {
+        "required": false,
+        "type": "number",
+        "default": 1000,
+        "description": "Perspective depth in pixels"
+      },
+      "mm-slider-scale": {
+        "required": false,
+        "type": "boolean",
+        "default": false,
+        "description": "Scale items based on position"
+      },
+      "mm-slider-scale-range": {
+        "required": false,
+        "type": "string",
+        "default": "0.5,1",
+        "description": "Min and max scale values (comma-separated)"
+      }
+    },
+    "elements": {
+      "mm-slider-element": {
+        "track": {
+          "required": true,
+          "description": "Container for slider items"
+        },
+        "item": {
+          "required": true,
+          "description": "Individual slide item (multiple required)"
+        }
+      }
+    }
+  },
+  "features": [
+    "Multiple modes in one solution",
+    "Marquee: Horizontal infinite scrolling",
+    "Curved: Circular arc rotation",
+    "Discrete: Prev/next navigation (coming soon)",
+    "GSAP-powered smooth animations",
+    "Configurable speed and direction",
+    "Hover pause (optional)",
+    "3D effects for curved mode (optional)",
+    "Dynamic scaling (optional)"
+  ],
+  "browserSupport": {
+    "chrome": "90+",
+    "firefox": "88+",
+    "safari": "14+",
+    "edge": "90+"
+  },
+  "fileSize": {
+    "regular": "~8KB",
+    "minified": "~4KB"
+  },
+  "architecture": {
+    "pattern": "Strategy Pattern with Factory",
+    "structure": "Modular mode-based classes",
+    "extensibility": "Easy to add new modes"
+  }
+}
