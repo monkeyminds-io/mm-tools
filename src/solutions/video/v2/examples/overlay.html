@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MonkeyMinds Video - Overlay Mode</title>
+  
+  <!-- MonkeyMinds Tailwind Styles -->
+  <link rel="stylesheet" href="../../../../styles/monkeyminds.css">
+</head>
+<body class="bg-slate-50 p-8 lg:p-12">
+  
+  <!-- Header -->
+  <header class="max-w-7xl mx-auto mb-16">
+    <div class="flex items-center gap-3 mb-4">
+      <span class="text-4xl">🐵</span>
+      <h1 class="text-4xl font-bold text-slate-900">MonkeyMinds Video</h1>
+    </div>
+    <p class="text-xl text-slate-600">Overlay Mode</p>
+    <p class="text-slate-500 mt-2">Play/pause video with custom overlay control</p>
+  </header>
+
+  <div class="max-w-5xl mx-auto space-y-16">
+    
+    <!-- Demo 1: Basic Overlay -->
+    <section>
+      <div class="mb-6">
+        <h2 class="text-2xl font-semibold text-slate-900 mb-2">Basic Overlay</h2>
+        <p class="text-slate-600">Click overlay to play, click video to pause.</p>
+      </div>
+      
+      <div mm-tool="video" mm-video-mode="overlay" class="relative aspect-video bg-black rounded-xl overflow-hidden shadow-lg">
+        <video mm-video-element="player" src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"></video>
+        
+        <div mm-video-element="overlay" class="flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div class="text-center">
+            <div class="w-24 h-24 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mb-4 mx-auto hover:bg-white/30 transition-colors">
+              <svg class="w-12 h-12 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            </div>
+            <p class="text-white text-lg font-semibold">Click to Play</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-4 bg-slate-900 rounded-lg p-4 overflow-x-auto">
+        <pre class="text-slate-100 text-sm"><code>&lt;div mm-tool="video" mm-video-mode="overlay"&gt;
+  &lt;video mm-video-element="player" src="video.mp4"&gt;&lt;/video&gt;
+  &lt;div mm-video-element="overlay"&gt;
+    &lt;!-- Your overlay content --&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+      </div>
+    </section>
+
+    <!-- Demo 2: Looping Video -->
+    <section>
+      <div class="mb-6">
+        <h2 class="text-2xl font-semibold text-slate-900 mb-2">Looping Video</h2>
+        <p class="text-slate-600">Video loops automatically when it ends.</p>
+      </div>
+      
+      <div mm-tool="video" 
+           mm-video-mode="overlay"
+           mm-video-loop="true"
+           class="relative aspect-video bg-black rounded-xl overflow-hidden shadow-lg">
+        <video mm-video-element="player" src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"></video>
+        
+        <div mm-video-element="overlay" class="flex items-center justify-center bg-gradient-to-br from-purple-500/80 to-pink-500/80">
+          <div class="text-center">
+            <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center mb-3 mx-auto">
+              <svg class="w-10 h-10 text-purple-600 ml-1" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            </div>
+            <p class="text-white text-lg font-bold">Looping Video</p>
+            <p class="text-white/80 text-sm">Click to start</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-4 bg-slate-900 rounded-lg p-4 overflow-x-auto">
+        <pre class="text-slate-100 text-sm"><code>&lt;div mm-tool="video" 
+     mm-video-mode="overlay"
+     mm-video-loop="true"&gt;
+  &lt;!-- video + overlay --&gt;
+&lt;/div&gt;</code></pre>
+      </div>
+    </section>
+
+    <!-- Demo 3: Muted Autoplay -->
+    <section>
+      <div class="mb-6">
+        <h2 class="text-2xl font-semibold text-slate-900 mb-2">Muted Autoplay</h2>
+        <p class="text-slate-600">Automatically starts playing (muted).</p>
+      </div>
+      
+      <div mm-tool="video" 
+           mm-video-mode="overlay"
+           mm-video-autoplay="true"
+           mm-video-muted="true"
+           mm-video-loop="true"
+           class="relative aspect-video bg-black rounded-xl overflow-hidden shadow-lg">
+        <video mm-video-element="player" src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"></video>
+        
+        <div mm-video-element="overlay" class="flex items-center justify-center bg-gradient-to-br from-cyan-500/80 to-blue-500/80">
+          <div class="text-center">
+            <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto">
+              <svg class="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-4 bg-slate-900 rounded-lg p-4 overflow-x-auto">
+        <pre class="text-slate-100 text-sm"><code>&lt;div mm-tool="video" 
+     mm-video-mode="overlay"
+     mm-video-autoplay="true"
+     mm-video-muted="true"
+     mm-video-loop="true"&gt;
+  &lt;!-- video + overlay --&gt;
+&lt;/div&gt;</code></pre>
+      </div>
+    </section>
+
+    <!-- Demo 4: No Transition -->
+    <section>
+      <div class="mb-6">
+        <h2 class="text-2xl font-semibold text-slate-900 mb-2">Instant Transition</h2>
+        <p class="text-slate-600">Overlay appears/disappears instantly (no fade).</p>
+      </div>
+      
+      <div mm-tool="video" 
+           mm-video-mode="overlay"
+           mm-video-transition="none"
+           class="relative aspect-video bg-black rounded-xl overflow-hidden shadow-lg">
+        <video mm-video-element="player" src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"></video>
+        
+        <div mm-video-element="overlay" class="flex items-center justify-center bg-gradient-to-br from-emerald-500/80 to-teal-500/80">
+          <div class="text-center">
+            <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center mb-3 mx-auto">
+              <svg class="w-10 h-10 text-emerald-600 ml-1" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            </div>
+            <p class="text-white text-lg font-bold">No Fade Effect</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-4 bg-slate-900 rounded-lg p-4 overflow-x-auto">
+        <pre class="text-slate-100 text-sm"><code>&lt;div mm-tool="video" 
+     mm-video-transition="none"&gt;
+  &lt;!-- video + overlay --&gt;
+&lt;/div&gt;</code></pre>
+      </div>
+    </section>
+
+    <!-- Demo 5: Custom Thumbnail Overlay -->
+    <section>
+      <div class="mb-6">
+        <h2 class="text-2xl font-semibold text-slate-900 mb-2">Custom Thumbnail Overlay</h2>
+        <p class="text-slate-600">Use an image as the overlay.</p>
+      </div>
+      
+      <div mm-tool="video" 
+           mm-video-mode="overlay"
+           class="relative aspect-video bg-black rounded-xl overflow-hidden shadow-lg">
+        <video mm-video-element="player" src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4"></video>
+        
+        <div mm-video-element="overlay" class="flex items-center justify-center">
+          <img src="https://picsum.photos/800/450" alt="Video thumbnail" class="w-full h-full object-cover">
+          <div class="absolute inset-0 flex items-center justify-center bg-black/30">
+            <div class="w-24 h-24 bg-white rounded-full flex items-center justify-center hover:scale-110 transition-transform">
+              <svg class="w-12 h-12 text-slate-900 ml-2" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-4 bg-slate-900 rounded-lg p-4 overflow-x-auto">
+        <pre class="text-slate-100 text-sm"><code>&lt;div mm-video-element="overlay"&gt;
+  &lt;img src="thumbnail.jpg" alt="Thumbnail"&gt;
+  &lt;!-- Play button overlay --&gt;
+&lt;/div&gt;</code></pre>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="max-w-7xl mx-auto mt-24 pt-12 border-t border-slate-200">
+    <div class="flex items-center justify-between">
+      <div>
+        <p class="text-slate-600 font-semibold">MonkeyMinds Tools v1.0</p>
+        <p class="text-slate-400 text-sm">Professional web solutions for modern developers</p>
+      </div>
+      <a href="https://monkeyminds.io" class="text-monkeyminds-500 hover:text-monkeyminds-600 font-medium">
+        monkeyminds.io →
+      </a>
+    </div>
+  </footer>
+
+  <!-- MonkeyMinds Video Script -->
+  <script src="http://localhost:3000/v2/video/index.js"></script>
+</body>
+</html>
