@@ -1,0 +1,129 @@
+{
+  "name": "List",
+  "version": "2.0.0",
+  "solution": "list",
+  "description": "Unified list solution with multiple modes: load more, pagination, and infinite scroll",
+  "modes": [
+    "loadmore",
+    "pagination",
+    "infinite"
+  ],
+  "dependencies": {},
+  "attributes": {
+    "container": {
+      "mm-tool": {
+        "required": true,
+        "value": "list",
+        "description": "Identifies the list container"
+      },
+      "mm-list-mode": {
+        "required": false,
+        "type": "string",
+        "values": ["loadmore", "pagination", "infinite"],
+        "default": "loadmore",
+        "description": "List mode"
+      }
+    },
+    "loadmoreMode": {
+      "mm-list-element": {
+        "list": {
+          "required": true,
+          "description": "Container for list items"
+        },
+        "more-button": {
+          "required": true,
+          "description": "Button to load more items"
+        },
+        "overlay": {
+          "required": false,
+          "description": "Optional fade overlay"
+        }
+      },
+      "mm-list-gap": {
+        "required": false,
+        "type": "number",
+        "default": 0,
+        "description": "Gap between items in pixels"
+      }
+    },
+    "paginationMode": {
+      "mm-list-element": {
+        "list": {
+          "required": true,
+          "description": "Container for list items"
+        },
+        "prev-button": {
+          "required": true,
+          "description": "Previous page button"
+        },
+        "next-button": {
+          "required": true,
+          "description": "Next page button"
+        },
+        "page-indicator": {
+          "required": false,
+          "description": "Current page display"
+        }
+      },
+      "mm-list-items-per-page": {
+        "required": false,
+        "type": "number",
+        "default": 10,
+        "description": "Items per page"
+      }
+    },
+    "infiniteMode": {
+      "mm-list-element": {
+        "list": {
+          "required": true,
+          "description": "Container for list items"
+        },
+        "sentinel": {
+          "required": true,
+          "description": "Element to observe for intersection"
+        },
+        "loader": {
+          "required": false,
+          "description": "Loading indicator"
+        }
+      },
+      "mm-list-threshold": {
+        "required": false,
+        "type": "number",
+        "default": 0.5,
+        "description": "Intersection threshold (0-1)"
+      }
+    }
+  },
+  "features": [
+    "Multiple modes in one solution",
+    "Load More: Height-based revealing animation",
+    "Pagination: Discrete page navigation (coming soon)",
+    "Infinite: Auto-load on scroll (coming soon)",
+    "Responsive with resize handling",
+    "Optional fade overlay",
+    "Custom events for each mode",
+    "Public API for reset and destroy"
+  ],
+  "events": {
+    "mm:listLoadMore": "Fired when load more button is clicked",
+    "mm:listComplete": "Fired when all content is revealed",
+    "mm:listPageChange": "Fired when page changes (pagination mode)",
+    "mm:listInfiniteLoad": "Fired when infinite scroll loads more (infinite mode)"
+  },
+  "browserSupport": {
+    "chrome": "60+",
+    "firefox": "55+",
+    "safari": "12+",
+    "edge": "79+"
+  },
+  "fileSize": {
+    "regular": "~10KB",
+    "minified": "~4KB"
+  },
+  "architecture": {
+    "pattern": "Strategy Pattern with Factory",
+    "structure": "Modular mode-based classes",
+    "extensibility": "Easy to add new modes"
+  }
+}
