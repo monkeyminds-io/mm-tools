@@ -1,0 +1,65 @@
+# Twine Security
+
+> Twine Security is a cybersecurity company that builds AI Digital Employees to help cyber teams close the industry's critical talent gap. Founded by cybersecurity experts from Claroty, Twine creates trustworthy Agentic AI professionals who execute security tasks from A to Z, enabling cybersecurity teams to focus on strategic initiatives.
+
+## About This Site
+
+This website provides information about Twine's AI Digital Employees, their capabilities, and how they augment cybersecurity team performance. Twine's first digital employee, Alex, specializes in Identity and Access Management (IAM). Last updated: November 2025
+
+## Main Navigation
+
+- Home: https://www.twinesecurity.com/
+- Company: https://www.twinesecurity.com/company
+- How it Works: https://www.twinesecurity.com/how-it-works
+- Products: https://www.twinesecurity.com/products/identity-and-access-management-iam
+- Resources: https://www.twinesecurity.com/resources
+- Contact: https://www.twinesecurity.com/#contact
+
+## Product Pages
+
+- Alex (IAM Digital Employee): https://www.twinesecurity.com/products/identity-and-access-management-iam
+
+## Use Cases
+
+- Account Ownership Integrity: https://www.twinesecurity.com/use-cases/account-ownership-integrity
+- SaaS Applications MFA Enforcement: https://www.twinesecurity.com/use-cases/saas-applications-mfa-enforcement
+
+## Resources & News
+
+- Latest Resources: https://www.twinesecurity.com/resources
+- RSAC 2025 Innovation Sandbox Finalist: https://www.twinesecurity.com/resource/twine-selected-as-top-10-finalist-for-rsac-tm-2025-conference-innovation-sandbox
+
+## Company Information
+
+- Privacy Policy: https://www.twinesecurity.com/legals/privacy-policy
+- Terms of Use: https://www.twinesecurity.com/legals/terms-of-use
+
+## Content Focus
+
+Our content primarily covers:
+- AI Digital Employees for cybersecurity teams
+- Identity and Access Management (IAM) automation
+- Addressing the cybersecurity talent gap
+- Agentic AI for cyber execution
+- Enterprise security automation and orchestration
+
+## Key Features & Capabilities
+
+- End-to-end IAM task execution and automation
+- Integration with existing security tools and infrastructure
+- SOC2, GDPR, CCPA compliant
+- Cost reduction up to 70% for IAM operations
+- Proactive security workflow orchestration
+
+## Company Background
+
+- Founded by Benny Porat (CEO), Nadav Erez (CTO), Omri Green, and Justin Woody
+- Former core team members of Claroty (multi-billion dollar cybersecurity company)
+- $12M seed funding from Dell Technologies Capital and Ten Eleven Ventures
+- Selected as Top 10 Finalist for RSAC 2025 Innovation Sandbox
+
+## Contact & Social
+
+- Email: info@twinesecurity.com
+- Privacy inquiries: privacy@twinesecurity.com
+- LinkedIn: [Company LinkedIn profile]
