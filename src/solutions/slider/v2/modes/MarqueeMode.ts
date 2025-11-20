@@ -46,14 +46,10 @@ export class MarqueeMode implements SliderMode {
     // Track styling for horizontal marquee
     gsap.set(this.track, {
       display: 'flex',
+      gap: this.config.gap + 'px',
       flexWrap: 'nowrap',
       alignItems: 'center',
       willChange: 'transform'
-    });
-
-    // Apply gap to all items
-    this.items.forEach(item => {
-      item.style.marginRight = `${this.config.gap}px`;
     });
   }
 
@@ -63,12 +59,11 @@ export class MarqueeMode implements SliderMode {
    */
   private cloneItems(): void {
     const originalCount = this.items.length;
-    
+
     // Clone the entire set twice for seamless loop
     for(let i = 0; i < 2; i++) {
       this.items.forEach(item => {
         const clone = item.cloneNode(true) as HTMLElement;
-        clone.style.marginRight = `${this.config.gap}px`;
         clone.setAttribute('data-clone', 'true');
         this.track.appendChild(clone);
       });
