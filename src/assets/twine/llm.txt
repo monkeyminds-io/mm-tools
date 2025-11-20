@@ -36,12 +36,10 @@ This website provides information about Twine's AI Digital Employees, their capa
 
 ## Content Focus
 
-Our content primarily covers:
-- AI Digital Employees for cybersecurity teams
-- Identity and Access Management (IAM) automation
-- Addressing the cybersecurity talent gap
-- Agentic AI for cyber execution
-- Enterprise security automation and orchestration
+Our content primarily covers: 
+- Agentic AI 
+- AI for IAM 
+- AI for cybersecurity
 
 ## Key Features & Capabilities
 
@@ -54,12 +52,10 @@ Our content primarily covers:
 ## Company Background
 
 - Founded by Benny Porat (CEO), Nadav Erez (CTO), Omri Green, and Justin Woody
-- Former core team members of Claroty (multi-billion dollar cybersecurity company)
-- $12M seed funding from Dell Technologies Capital and Ten Eleven Ventures
-- Selected as Top 10 Finalist for RSAC 2025 Innovation Sandbox
 
 ## Contact & Social
 
 - Email: info@twinesecurity.com
 - Privacy inquiries: privacy@twinesecurity.com
-- LinkedIn: [Company LinkedIn profile]
+- LinkedIn: [https://www.linkedin.com/company/twinesecurity/]
+- X (Twitter): [https://x.com/twinesecurity]

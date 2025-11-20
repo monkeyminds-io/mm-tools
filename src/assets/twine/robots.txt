@@ -1,0 +1,15 @@
+# robots.txt for Twine Security
+# https://twinesecurity.com/robots.txt
+
+User-agent: *
+Allow: /
+
+# Block utility pages
+Disallow: /404/
+Disallow: /password/
+
+# Block Webflow staging and staging folder
+Disallow: /*.webflow.io
+Disallow: /staging/*
+
+Sitemap: https://twinesecurity.com/sitemap.xml

@@ -1,75 +1,84 @@
 /**
- * MonkeyMinds Slider v1.2 - Marquee Mode
- * Horizontal infinite scrolling marquee
+ * MonkeyMinds Slider v1.2 - Marquee Mode (Refactored)
+ * Smooth infinite scrolling with seamless looping
  * 
- * Config Attributes:
- * N/A
+ * Performance Strategy: Use GSAP's modifiers to create a seamless
+ * loop by wrapping the position. This is the MOST performant approach:
+ * - One GSAP animation (GPU accelerated)
+ * - No DOM manipulation during animation
+ * - No position resets (no jumps)
+ * - Seamless infinite loop
+ * - Fewer clones needed
  */
 import { SliderMode, MarqueeDependencies } from '../types';
-import { GSAPTimeline } from '../../../../shared/types/gsap-types';
+import { getGSAP } from '@shared/types/gsap-types';
 
 export class MarqueeMode implements SliderMode {
   private container: HTMLElement;
   private track: HTMLElement;
   private items: HTMLElement[];
   private config: MarqueeDependencies['config'];
-  private gsap: any;
-  private timeline: GSAPTimeline | null = null;
+  private timeline: any = null;
 
   constructor(deps: MarqueeDependencies) {
     this.container = deps.container;
     this.track = deps.track;
     this.items = deps.items;
     this.config = deps.config;
-    this.gsap = deps.gsap;
   }
 
   public init(): void {
     this.setupTrack();
     this.cloneItems();
-    this.createAnimation();
+    this.createSeamlessAnimation();
     
     if (this.config.pauseOnHover) {
       this.setupHoverPause();
     }
   }
 
+  /**
+   * Setup track for horizontal marquee
+   */
   private setupTrack(): void {
+    const gsap = getGSAP()!;
+    
+    // Track styling for horizontal marquee
+    gsap.set(this.track, {
+      display: 'flex',
+      flexWrap: 'nowrap',
+      alignItems: 'center',
+      willChange: 'transform'
+    });
+
     // Apply gap to all items
     this.items.forEach(item => {
       item.style.marginRight = `${this.config.gap}px`;
     });
-
-    // Track styling for horizontal marquee
-    this.gsap.set(this.track, {
-      display: 'flex',
-      flexWrap: 'nowrap',
-      alignItems: 'center',
-      width: 'max-content',
-      willChange: 'transform'
-    });
   }
 
+  /**
+   * Clone items - we only need enough to create seamless loop
+   * Just 1 extra set is enough with modulo wrapping!
+   */
   private cloneItems(): void {
-    const trackWidth = this.getTrackWidth();
-    const containerWidth = this.container.offsetWidth;
+    const originalCount = this.items.length;
     
-    // Need at least 2.5x container width for seamless loop
-    const minTotalWidth = containerWidth * 2.5;
-    const clonesNeeded = Math.ceil(minTotalWidth / trackWidth);
+    // Clone the entire set once for seamless loop
+    this.items.forEach(item => {
+      const clone = item.cloneNode(true) as HTMLElement;
+      clone.style.marginRight = `${this.config.gap}px`;
+      clone.setAttribute('data-clone', 'true');
+      this.track.appendChild(clone);
+    });
     
-    // Clone the entire set of items multiple times
-    for (let i = 0; i < clonesNeeded; i++) {
-      this.items.forEach(item => {
-        const clone = item.cloneNode(true) as HTMLElement;
-        clone.style.marginRight = `${this.config.gap}px`;
-        clone.setAttribute('data-clone', 'true');
-        this.track.appendChild(clone);
-      });
-    }
+    console.log(`🐒 Marquee: Cloned ${originalCount} items for seamless loop`);
   }
 
-  private getTrackWidth(): number {
+  /**
+   * Get width of one complete set of original items
+   */
+  private getSetWidth(): number {
     let width = 0;
     this.items.forEach(item => {
       width += item.offsetWidth + this.config.gap;
@@ -77,57 +86,76 @@ export class MarqueeMode implements SliderMode {
     return width;
   }
 
-  private createAnimation(): void {
-    const trackWidth = this.getTrackWidth();
-    const duration = trackWidth / this.config.speed;
+  /**
+   * Create seamless animation using GSAP modifiers
+   * This wraps the position for infinite scrolling with NO jumps
+   */
+  private createSeamlessAnimation(): void {
+    const gsap = getGSAP()!;
+    const setWidth = this.getSetWidth();
+    const duration = setWidth / this.config.speed;
 
-    this.timeline = this.gsap.timeline({
+    this.timeline = gsap.timeline({
       repeat: -1
     });
 
     if (this.config.direction === 'left') {
-      // Left: Start at 0, move to -trackWidth
-      this.timeline?.fromTo(
+      // Animate infinitely left with modulo wrapping
+      this.timeline.fromTo(
         this.track,
         { x: 0 },
         {
-          x: -trackWidth,
+          x: -setWidth,
           duration: duration,
           ease: 'none',
-          onRepeat: () => {
-            this.gsap.set(this.track, { x: 0 });
+          modifiers: {
+            x: (x: any) => {
+              // Wrap position using modulo for seamless loop
+              const xNum = parseFloat(x);
+              return `${xNum % setWidth}px`;
+            }
           }
         }
       );
     } else {
-      // Right: Start at -trackWidth, move to 0
-      this.timeline?.fromTo(
+      // Animate infinitely right with modulo wrapping
+      this.timeline.fromTo(
         this.track,
-        { x: -trackWidth },
+        { x: -setWidth },
         {
           x: 0,
           duration: duration,
           ease: 'none',
-          onRepeat: () => {
-            this.gsap.set(this.track, { x: -trackWidth });
+          modifiers: {
+            x: (x: any) => {
+              // Wrap position using modulo for seamless loop
+              const xNum = parseFloat(x);
+              return `${-(Math.abs(xNum) % setWidth)}px`;
+            }
           }
         }
       );
     }
   }
 
+  /**
+   * Setup hover pause functionality
+   */
   private setupHoverPause(): void {
     if (!this.timeline) return;
 
     this.container.addEventListener('mouseenter', () => {
-      this.timeline?.pause();
+      this.timeline.pause();
     });
 
     this.container.addEventListener('mouseleave', () => {
-      this.timeline?.play();
+      this.timeline.play();
     });
   }
 
+  /**
+   * Cleanup
+   */
   public destroy(): void {
     // Clean up timeline
     if (this.timeline) {
