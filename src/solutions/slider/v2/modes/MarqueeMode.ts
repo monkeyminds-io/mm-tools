@@ -81,7 +81,7 @@ export class MarqueeMode implements SliderMode {
   private getSetWidth(): number {
     let width = 0;
     this.items.forEach(item => {
-      width += item.offsetWidth + this.config.gap;
+      width += item.offsetWidth // + this.config.gap;
     });
     return width;
   }
