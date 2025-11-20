@@ -59,20 +59,22 @@ export class MarqueeMode implements SliderMode {
 
   /**
    * Clone items - we only need enough to create seamless loop
-   * Just 1 extra set is enough with modulo wrapping!
+   * We need 2 extra sets of items for seamless looping with modulo wrapping.
    */
   private cloneItems(): void {
     const originalCount = this.items.length;
     
-    // Clone the entire set once for seamless loop
-    this.items.forEach(item => {
-      const clone = item.cloneNode(true) as HTMLElement;
-      clone.style.marginRight = `${this.config.gap}px`;
-      clone.setAttribute('data-clone', 'true');
-      this.track.appendChild(clone);
-    });
-    
-    console.log(`🐒 Marquee: Cloned ${originalCount} items for seamless loop`);
+    // Clone the entire set twice for seamless loop
+    for(let i = 0; i < 2; i++) {
+      this.items.forEach(item => {
+        const clone = item.cloneNode(true) as HTMLElement;
+        clone.style.marginRight = `${this.config.gap}px`;
+        clone.setAttribute('data-clone', 'true');
+        this.track.appendChild(clone);
+      });
+    }
+
+    console.log(`🐒 Marquee: Cloned ${originalCount * 2} items for seamless loop`);
   }
 
   /**
