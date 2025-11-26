@@ -1,5 +1,5 @@
 /**
- * MonkeyMinds Slider v1.2 - Type Definitions
+ * MonkeyMinds Slider v2 - Type Definitions
  */
 
 // =============================================================================
@@ -37,10 +37,16 @@ export interface CurvedConfig extends BaseConfig {
 }
 
 /**
- * Discrete mode config (future)
+ * Discrete mode config (classic slider with prev/next)
  */
 export interface DiscreteConfig extends BaseConfig {
-  // Add discrete-specific config here later
+  transition: 'slide' | 'fade';
+  duration: number; // in milliseconds
+  ease: string;
+  autoplay: boolean;
+  autoplayDelay: number; // in milliseconds
+  keyboard: boolean;
+  swipe: boolean;
 }
 
 /**
@@ -93,7 +99,7 @@ export interface CurvedDependencies extends BaseDependencies {
 }
 
 /**
- * Discrete mode dependencies (future)
+ * Discrete mode dependencies
  */
 export interface DiscreteDependencies extends BaseDependencies {
   // Uses base config, parses discrete-specific internally

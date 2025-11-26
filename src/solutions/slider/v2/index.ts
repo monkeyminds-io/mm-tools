@@ -1,5 +1,5 @@
 /**
- * MonkeyMinds Slider v1.2
+ * MonkeyMinds Slider v2
  * Unified slider solution with multiple modes
  * 
  * Attributes:
@@ -16,6 +16,7 @@
 import { SliderMode, BaseConfig, BaseDependencies } from './types';
 import { MarqueeMode } from './modes/MarqueeMode';
 import { CurvedMode } from './modes/CurvedMode';
+import { DiscreteMode } from './modes/DiscreteMode';
 import { requireGSAP } from '../../../shared/types/gsap-types';
 import { getAttributeNumber } from '../../../shared/utils';
 
@@ -93,11 +94,11 @@ class Slider {
         break;
       
       case 'discrete':
-        console.warn('MonkeyMinds Slider: Discrete mode not yet implemented');
-        return;
+        this.mode = new DiscreteMode(deps);
+        break;
       
       default:
-        console.error(`MonkeyMinds Slider: Unknown mode "${this.config.mode}"`);
+        this.mode = new DiscreteMode(deps);
         return;
     }
 
