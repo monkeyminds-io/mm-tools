@@ -59,7 +59,7 @@ class Slider {
   }
 
   private parseConfig(): BaseConfig {
-    const mode = (this.container.getAttribute('mm-slider-mode') as 'marquee' | 'curved' | 'discrete') || 'marquee';
+    const mode = (this.container.getAttribute('mm-slider-mode') as 'marquee' | 'curved' | 'discrete') || 'discrete';
     
     // Only parse base/common config here
     return {
@@ -98,7 +98,7 @@ class Slider {
         break;
       
       default:
-        this.mode = new DiscreteMode(deps);
+        console.error(`MonkeyMinds Slider: Unknown mode "${this.config.mode}"`);
         return;
     }
 

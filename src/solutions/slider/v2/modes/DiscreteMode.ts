@@ -153,10 +153,16 @@ export class DiscreteMode implements ISliderMode {
   private setupEventListeners(): void {
     // Navigation buttons
     if (this.prevButton) {
-      this.prevButton.addEventListener('click', () => this.prev());
+      this.prevButton.addEventListener('click', (event) => {
+        event.preventDefault();
+        this.prev();
+      });
     }
     if (this.nextButton) {
-      this.nextButton.addEventListener('click', () => this.next());
+      this.nextButton.addEventListener('click', (event) => {
+        event.preventDefault();
+        this.next()
+    });
     }
 
     // Keyboard navigation
