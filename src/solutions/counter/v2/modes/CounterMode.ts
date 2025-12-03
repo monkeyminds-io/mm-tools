@@ -51,8 +51,8 @@ export class CounterMode implements ICounterMode {
     const digits = numberToString(this.currentValue).split('');
     
     digits.forEach((digitStr, index) => {
-      // Add divider before block (except first)
-      if (index > 0 && index % 3 === 0) {
+      // Add divider before each block (except first)
+      if (index > 0 && this.shouldAddDivider(digits.length, index)) {
         this.addDivider();
       }
       
@@ -85,6 +85,12 @@ export class CounterMode implements ICounterMode {
     this.gsap.set(strip, { y: `-${initialValue * 10}%` });
     
     this.digitBlocks.push({ block, strip });
+  }
+
+  private shouldAddDivider(totalDigits: number, currentIndex: number): boolean {
+    // Add divider every 3 digits from right (for thousands separator)
+    const positionFromRight = totalDigits - currentIndex;
+    return positionFromRight % 3 === 0;
   }
   
   private addDivider(): void {

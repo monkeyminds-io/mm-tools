@@ -59,7 +59,7 @@ class FlipCounter {
     const config: BaseConfig = {
       mode: (container.getAttribute('mm-counter-mode') as 'timer' | 'counter') || 'counter',
       direction: (container.getAttribute('mm-counter-direction') as 'up' | 'down') || 'up',
-      divider: container.getAttribute('mm-counter-divider') || ':',
+      divider: container.getAttribute('mm-counter-divider') || ',',
       speed: getAttributeNumber(container, 'mm-counter-speed', 1000)
     };
 
