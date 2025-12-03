@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flip Counter - Simple Example</title>
+
+  <!-- MonkeyMinds Tailwind Styles -->
+  <link rel="stylesheet" href="../../../../styles/monkeyminds.css">
+  
+  <!-- GSAP -->
+  <script async src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+  <!-- MonkeyMinds Counter v2 Script -->
+  <script async src="http://localhost:3000/v2/counter/index.js"></script>
+
+  <style>
+    .flip-digit-block {
+      width: 3.5rem;
+      height: 4.5rem;
+      font-size: 3rem;
+      font-weight: bold;
+      background: linear-gradient(180deg, #1e40af 0%, #1e3a8a 100%);
+      border-radius: 0.5rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+      margin: 0 0.125rem;
+    }
+
+    .flip-digit {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-family: 'Courier New', monospace;
+    }
+
+    .flip-divider {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: #3b82f6;
+      margin: 0 0.5rem;
+    }
+  </style>
+</head>
+<body class="bg-gray-900 min-h-screen flex items-center justify-center p-8">
+  
+  <div class="max-w-4xl mx-auto space-y-16 text-center">
+    
+    <h1 class="text-4xl font-bold text-white mb-16">
+      Flip Counter Examples
+    </h1>
+
+    <!-- Countdown Timer -->
+    <div>
+      <h2 class="text-xl text-gray-400 mb-6">Countdown to New Year 2026</h2>
+      <div mm-tool="flip-counter" 
+           mm-counter-mode="timer"
+           mm-counter-target-date="2026-01-01T00:00:00"
+           mm-counter-direction="down">
+        <div mm-counter-element="display"></div>
+      </div>
+    </div>
+
+    <!-- Counter to 1000 -->
+    <div>
+      <h2 class="text-xl text-gray-400 mb-6">Counter to 1000</h2>
+      <div mm-tool="flip-counter" 
+           mm-counter-mode="counter"
+           mm-counter-start="0"
+           mm-counter-target="1000"
+           mm-counter-increment="10"
+           mm-counter-speed="100"
+           mm-counter-divider=",">
+        <div mm-counter-element="display"></div>
+      </div>
+    </div>
+
+    <!-- Infinite Counter -->
+    <div>
+      <h2 class="text-xl text-gray-400 mb-6">Infinite Counter (watch it grow!)</h2>
+      <div mm-tool="flip-counter" 
+           mm-counter-mode="counter"
+           mm-counter-start="0"
+           mm-counter-target="infinite"
+           mm-counter-increment="1"
+           mm-counter-speed="1000">
+        <div mm-counter-element="display"></div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>
