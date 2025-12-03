@@ -28,7 +28,9 @@ export class CounterMode implements ICounterMode {
     this.gsap = deps.gsap;
     
     // Parse counter config
-    this.currentValue = parseInt(this.container.getAttribute('mm-counter-start') || '0');
+    const originValue = this.container.getAttribute('mm-counter-start') || '0';
+    const storedValue = localStorage.getItem('mm-counter-current-value');
+    this.currentValue = storedValue ? parseInt(storedValue, 10) : parseInt(originValue, 10);
     const target = this.container.getAttribute('mm-counter-target');
     this.targetValue = target && target !== 'infinite' ? parseInt(target) : null;
     this.increment = parseInt(this.container.getAttribute('mm-counter-increment') || '1');
@@ -151,6 +153,8 @@ export class CounterMode implements ICounterMode {
         });
       }
     });
+    // Store current value in localStorage
+    localStorage.setItem('mm-counter-current-value', this.currentValue.toString());
   }
   
   public destroy(): void {
