@@ -97,7 +97,7 @@ export class CounterMode implements ICounterMode {
     const divider = document.createElement('span');
     divider.className = 'flip-digit';
     divider.textContent = this.config.divider;
-    divider.style.cssText = 'display: inline-block; margin: 0 0.25em;';
+    divider.style.cssText = 'display: inline-block;';
     this.display.appendChild(divider);
   }
   
